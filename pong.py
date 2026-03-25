@@ -6,7 +6,11 @@ HEIGHT = 400
 paddle_left = Rect((30, HEIGHT // 2 - 30, 10, 60))
 paddle_right = Rect((WIDTH - 40, HEIGHT // 2 - 30, 10, 60))
 ball = Rect((WIDTH // 2, HEIGHT // 2, 10, 10))
-ball_vel = [5, 5]  
+ball_vel = [5.0, 5.0]  
+
+
+ball_exact_x = float(WIDTH // 2)
+ball_exact_y = float(HEIGHT // 2)
 
 wkey = Actor('wkey')
 wkey.x = 100
@@ -34,17 +38,14 @@ button = Rect((WIDTH - 110, HEIGHT - 50, 100, 40))
 
 game_started = False
 show_wkey = True
-bw_mode = False
+bwmode = False
 
 def start_game():
     global game_started
     game_started = True
 
 def hide_wkey():
-    global show_wkey
-    global show_skey
-    global show_upkey
-    global show_downkey
+    global show_wkey, show_skey, show_upkey, show_downkey
     show_wkey = False
     show_skey = False
     show_upkey = False
@@ -54,18 +55,16 @@ clock.schedule_unique(start_game, 3.0)
 clock.schedule_unique(hide_wkey, 10.0)
 
 def on_mouse_down(pos):
-    global ball_vel, bw_mode
+    global ball_vel, bwmode
     if button.collidepoint(pos):
         
-        bw_mode = not bw_mode
+        bwmode = not bwmode
         
-        
-        if bw_mode:
+        if bwmode:
             target_speed = 2.5
         else:
             target_speed = 5.0
             
-        
         if ball_vel[0] > 0:
             ball_vel[0] = target_speed
         else:
@@ -77,10 +76,8 @@ def on_mouse_down(pos):
             ball_vel[1] = -target_speed
 
 def update():
-    global score
-    global score1
-    global game_started 
-    global ball_vel
+    global score, score1, game_started, ball_vel, bwmode
+    global ball_exact_x, ball_exact_y
 
     if keyboard.w and paddle_left.top > 0:
         paddle_left.y -= 5
@@ -94,15 +91,34 @@ def update():
     if not game_started:
         return 
 
-    ball.x += ball_vel[0]
-    ball.y += ball_vel[1]
+    
+    ball_exact_x += ball_vel[0]
+    ball_exact_y += ball_vel[1]
+    
+    
+    ball.x = int(ball_exact_x)
+    ball.y = int(ball_exact_y)
    
-    if ball.top <= 0 or ball.bottom >= HEIGHT:
-        ball_vel[1] = -ball_vel[1]
+    
+    if ball.top <= 0:
+        ball.top = 0
+        ball_exact_y = float(ball.y)
+        ball_vel[1] = abs(ball_vel[1])
         try:
             sounds.pong.play()
         except:
             pass
+            
+    
+    if ball.bottom >= HEIGHT:
+        ball.bottom = HEIGHT
+        ball_exact_y = float(ball.y)
+        ball_vel[1] = -abs(ball_vel[1])
+        try:
+            sounds.pong.play()
+        except:
+            pass
+    
     
     if ball.colliderect(paddle_left) or ball.colliderect(paddle_right):
         ball_vel[0] = -ball_vel[0]
@@ -111,22 +127,31 @@ def update():
         except:
             pass
     
+    
     if ball.left < 0:
         ball.center = (WIDTH // 2, HEIGHT // 2)
+        ball_exact_x = float(ball.x)
+        ball_exact_y = float(ball.y)
         ball_vel[0] = -ball_vel[0]  
         score = 0
         
+    
     if ball.right > WIDTH:
         ball.center = (WIDTH // 2, HEIGHT // 2)
+        ball_exact_x = float(ball.x)
+        ball_exact_y = float(ball.y)
         ball_vel[0] = -ball_vel[0]  
         score1 = 0
+    
     
     if ball.colliderect(bouncyball) or ball.colliderect(bouncyball2) or ball.colliderect(bouncyball3):
         ball_vel[0] = -ball_vel[0]
    
+   
     if ball.colliderect(paddle_left):
         score = score + 1
 
+    
     if ball.colliderect(paddle_right):
         score1 = score1 + 1
 
@@ -149,7 +174,7 @@ def draw():
     screen.draw.text('Score: ' + str(score), (15,10), color=(255,255,255), fontsize=30)
     screen.draw.text('Score: ' + str(score1), (500,10), color=(255,255,255), fontsize=30)
     
-    if bw_mode:
+    if bwmode:
         color1, color2, color3 = "white", "gray", "white"
         button_text = "Accessibility"
     else:
@@ -165,6 +190,6 @@ def draw():
     screen.draw.text(button_text, center=button.center, color="white", fontsize=20)
 
     if not game_started:
-        screen.draw.text("GET READY!", center=(WIDTH // 2, HEIGHT // 4), color= ('orange'), fontsize=50)
+        screen.draw.text("GET READY!", center=(WIDTH // 2, HEIGHT // 4), color='orange', fontsize=50)
 
 pgzrun.go()
