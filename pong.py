@@ -171,8 +171,8 @@ def draw():
         except:
             pass 
     
-    screen.draw.text('Score: ' + str(score), (15,10), color=(255,255,255), fontsize=30)
-    screen.draw.text('Score: ' + str(score1), (500,10), color=(255,255,255), fontsize=30)
+    screen.draw.text('Left: ' + str(score), (15,10), color=(255,255,255), fontsize=30)
+    screen.draw.text('Right: ' + str(score1), (500,10), color=(255,255,255), fontsize=30)
     
     if bwmode:
         color1, color2, color3 = "white", "gray", "white"
