@@ -6,8 +6,7 @@ HEIGHT = 400
 paddle_left = Rect((30, HEIGHT // 2 - 30, 10, 60))
 paddle_right = Rect((WIDTH - 40, HEIGHT // 2 - 30, 10, 60))
 ball = Rect((WIDTH // 2, HEIGHT // 2, 10, 10))
-ball_vel = [5.0, 5.0]  
-
+ball_vel = [5, 5]  
 
 ball_exact_x = float(WIDTH // 2)
 ball_exact_y = float(HEIGHT // 2)
@@ -51,8 +50,8 @@ def hide_wkey():
     show_upkey = False
     show_downkey = False 
 
-clock.schedule_unique(start_game, 3.0)
-clock.schedule_unique(hide_wkey, 10.0)
+clock.schedule_unique(start_game, 3)
+clock.schedule_unique(hide_wkey, 10)
 
 def on_mouse_down(pos):
     global ball_vel, bwmode
@@ -61,9 +60,9 @@ def on_mouse_down(pos):
         bwmode = not bwmode
         
         if bwmode:
-            target_speed = 2.5
+            target_speed = 2
         else:
-            target_speed = 5.0
+            target_speed = 5
             
         if ball_vel[0] > 0:
             ball_vel[0] = target_speed
